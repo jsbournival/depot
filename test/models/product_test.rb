@@ -12,8 +12,23 @@ class ProductTest < ActiveSupport::TestCase
   	assert product.errors[:image_url].any?
   end
 
+  test "product nust have a title of at least 10 char" do
+  	product = Product.new description: 'blah', price: 8, image_url: 'blah.jpg'
+
+  	product.title = '123456789'
+  	assert product.invalid?
+  	assert_equal [I18n.translate("errors.messages.too_short", count: 10)], product.errors[:title]
+
+  	product.title = "1234567890"
+  	assert product.valid?
+  	
+  	product.title = "123456789023254364567756757674565345435"
+  	assert product.valid?, "very long number should be valid"
+  end
+
+
   test "product must have a valid price" do
-  	product = Product.new title: 'test', description: 'test', image_url: 'test.jpg'
+  	product = Product.new title: 'test_test_test', description: 'test', image_url: 'test.jpg'
   	
   	product.price = 0.001
   	assert product.invalid?
@@ -29,7 +44,7 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   def new_product (image_url) 
-  	Product.new title: 'test', description: 'test', price: 1, image_url: image_url
+  	Product.new title: 'test_test_test', description: 'test', price: 1, image_url: image_url
   end
 
   test "image_url" do
